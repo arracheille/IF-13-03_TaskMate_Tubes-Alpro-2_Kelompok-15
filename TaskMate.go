@@ -1,17 +1,14 @@
 package main
 
-import (
-	"fmt"
-)
-
+import "fmt"
 type Tugas struct {
-	ID          string
-	NamaTugas   string
-	Kategori    string
-	Deskripsi   string
-	Kesulitan   int
-	Durasi      int
-	Selesai     bool
+	ID string
+	NamaTugas string
+	Kategori string
+	Deskripsi string
+	Kesulitan int
+	Durasi int
+	Selesai bool
 }
 
 var dataTugas []Tugas
@@ -155,15 +152,15 @@ func tandaiSelesai() {
 }
 
 func sequentialSearch() {
+	var pilih int
+	var keyword string
+
 	fmt.Println("Cari berdasarkan:")
 	fmt.Println("1. Nama Pekerjaan")
 	fmt.Println("2. Kategori Ruangan")
 	fmt.Print("Pilih: ")
 
-	var pilih int
 	fmt.Scan(&pilih)
-
-	var keyword string
 
 	if pilih == 1 {
 		fmt.Print("Masukkan nama pekerjaan yang dicari: ")
@@ -209,7 +206,8 @@ func sequentialSearch() {
 }
 
 func binarySearch() {
-	// Urutkan data berdasarkan NamaTugas dulu (selection sort)
+	var cari string
+
 	for i := 0; i < len(dataTugas)-1; i++ {
 		min := i
 		for j := i + 1; j < len(dataTugas); j++ {
@@ -220,7 +218,6 @@ func binarySearch() {
 		dataTugas[i], dataTugas[min] = dataTugas[min], dataTugas[i]
 	}
 
-	var cari string
 	fmt.Print("Masukkan nama pekerjaan yang dicari: ")
 	fmt.Scan(&cari)
 
