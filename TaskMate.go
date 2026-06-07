@@ -373,8 +373,10 @@ func main() {
 			binarySearch(&dataTugas)
 		} else if pilih == 8 {
 			insertionSortDurasi(&dataTugas)
+			tampilTugas(dataTugas)
 		} else if pilih == 9 {
 			selectionSortKesulitan(&dataTugas)
+			tampilTugas(dataTugas)
 		} else if pilih == 10 {
 			statistik(dataTugas)
 		} else if pilih == 0 {
