@@ -80,7 +80,4 @@ Rata-rata Waktu Kerja : 20.00 menit
 
 ## 📝 Catatan
 
-- Data **tidak disimpan secara permanen** — semua data hilang saat program ditutup. Untuk penyimpanan persisten, pertimbangkan integrasi dengan file JSON atau database.
 - Input nama, kategori, dan deskripsi yang mengandung **spasi** tidak didukung karena menggunakan `fmt.Scan()`. Gunakan kata tunggal atau garis bawah (contoh: `Ruang_Tamu`).
-- ID tugas bersifat **string bebas** dan tidak divalidasi untuk keunikan secara otomatis — pastikan ID yang dimasukkan unik untuk menghindari konflik.
-- Pemanggilan **Binary Search** akan mengubah urutan data secara permanen karena melakukan sorting sebelum pencarian.

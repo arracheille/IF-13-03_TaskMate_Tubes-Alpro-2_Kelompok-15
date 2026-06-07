@@ -1,6 +1,7 @@
 package main
 
 import "fmt"
+
 type Tugas struct {
 	ID string
 	NamaTugas string
@@ -11,9 +12,9 @@ type Tugas struct {
 	Selesai bool
 }
 
-var dataTugas []Tugas
+type arrTugas []Tugas
 
-func tambahTugas() {
+func tambahTugas(T *arrTugas) {
 	var t Tugas
 
 	fmt.Print("Masukkan ID Tugas   : ")
@@ -25,7 +26,7 @@ func tambahTugas() {
 	fmt.Print("Masukkan Kategori Ruangan : ")
 	fmt.Scan(&t.Kategori)
 
-	fmt.Print("Masukkan Deskripsi Pekerjaan : ")
+	fmt.Print("Masukkan Deskripsi (gunakan underscore untuk spasi) : ")
 	fmt.Scan(&t.Deskripsi)
 
 	fmt.Println("Skala Kesulitan:")
@@ -40,126 +41,143 @@ func tambahTugas() {
 
 	t.Selesai = false
 
-	dataTugas = append(dataTugas, t)
+	*T = append(*T, t)
 
 	fmt.Println("Data tugas berhasil ditambahkan!")
 }
 
-func tampilTugas() {
+func tampilTugas(T arrTugas) {
+	var i int
+
 	fmt.Println("\n===== DAFTAR TUGAS RUMAH TANGGA =====")
 
-	if len(dataTugas) == 0 {
+	if len(T) == 0 {
 		fmt.Println("Data kosong")
 		return
 	}
 
-	for i := 0; i < len(dataTugas); i++ {
-		labelKesulitan := ""
-		if dataTugas[i].Kesulitan == 1 {
+	for i = 0; i < len(T); i += 1 {
+		labelKesulitan := "Sulit"
+		if T[i].Kesulitan == 1 {
 			labelKesulitan = "Mudah"
-		} else if dataTugas[i].Kesulitan == 2 {
+		} else if T[i].Kesulitan == 2 {
 			labelKesulitan = "Sedang"
-		} else {
-			labelKesulitan = "Sulit"
 		}
 
 		statusSelesai := "Belum Selesai"
-		if dataTugas[i].Selesai {
+		if T[i].Selesai {
 			statusSelesai = "Selesai"
 		}
 
-		fmt.Println("ID Tugas   :", dataTugas[i].ID)
-		fmt.Println("Nama Tugas :", dataTugas[i].NamaTugas)
-		fmt.Println("Kategori   :", dataTugas[i].Kategori)
-		fmt.Println("Deskripsi  :", dataTugas[i].Deskripsi)
+		fmt.Println("ID Tugas   :", T[i].ID)
+		fmt.Println("Nama Tugas :", T[i].NamaTugas)
+		fmt.Println("Kategori   :", T[i].Kategori)
+		fmt.Println("Deskripsi  :", T[i].Deskripsi)
 		fmt.Println("Kesulitan  :", labelKesulitan)
-		fmt.Println("Durasi     :", dataTugas[i].Durasi, "menit")
+		fmt.Println("Durasi     :", T[i].Durasi, "menit")
 		fmt.Println("Status     :", statusSelesai)
 		fmt.Println("---------------------------")
 	}
 }
 
-func ubahTugas() {
+func ubahTugas(T *arrTugas) {
 	var id string
 
 	fmt.Print("Masukkan ID Tugas yang ingin diubah: ")
 	fmt.Scan(&id)
 
-	for i := 0; i < len(dataTugas); i++ {
-		if dataTugas[i].ID == id {
-
-			fmt.Print("Nama Tugas baru : ")
-			fmt.Scan(&dataTugas[i].NamaTugas)
-
-			fmt.Print("Kategori baru   : ")
-			fmt.Scan(&dataTugas[i].Kategori)
-
-			fmt.Print("Deskripsi baru  : ")
-			fmt.Scan(&dataTugas[i].Deskripsi)
-
-			fmt.Println("Skala Kesulitan:")
-			fmt.Println("1. Mudah")
-			fmt.Println("2. Sedang")
-			fmt.Println("3. Sulit")
-			fmt.Print("Kesulitan baru (1-3): ")
-			fmt.Scan(&dataTugas[i].Kesulitan)
-
-			fmt.Print("Durasi baru (menit) : ")
-			fmt.Scan(&dataTugas[i].Durasi)
-
-			fmt.Println("Data berhasil diubah!")
-			return
-		}
+	idx := seqSearchID(*T, id)
+	if idx == -1 {
+		fmt.Println("Data tidak ditemukan")
+		return
 	}
 
-	fmt.Println("Data tidak ditemukan")
+	fmt.Print("Nama Tugas baru : ")
+	fmt.Scan(&(*T)[idx].NamaTugas)
+
+	fmt.Print("Kategori baru   : ")
+	fmt.Scan(&(*T)[idx].Kategori)
+
+	fmt.Print("Deskripsi baru  : ")
+	fmt.Scan(&(*T)[idx].Deskripsi)
+
+	fmt.Println("Skala Kesulitan:")
+	fmt.Println("1. Mudah")
+	fmt.Println("2. Sedang")
+	fmt.Println("3. Sulit")
+	fmt.Print("Kesulitan baru (1-3): ")
+	fmt.Scan(&(*T)[idx].Kesulitan)
+
+	fmt.Print("Durasi baru (menit) : ")
+	fmt.Scan(&(*T)[idx].Durasi)
+
+	fmt.Println("Data berhasil diubah!")
 }
 
-func hapusTugas() {
+func hapusTugas(T *arrTugas) {
+	var j int
 	var id string
 
 	fmt.Print("Masukkan ID Tugas yang ingin dihapus: ")
 	fmt.Scan(&id)
 
-	for i := 0; i < len(dataTugas); i++ {
-		if dataTugas[i].ID == id {
-
-			dataTugas = append(dataTugas[:i], dataTugas[i+1:]...)
-
-			fmt.Println("Data berhasil dihapus!")
-			return
-		}
+	idx := seqSearchID(*T, id)
+	if idx == -1 {
+		fmt.Println("Data tidak ditemukan")
+		return
 	}
 
-	fmt.Println("Data tidak ditemukan")
+	j = idx
+	for j < len(*T)-1 {
+		(*T)[j] = (*T)[j+1]
+		j = j + 1
+	}
+	*T = (*T)[:len(*T)-1]
+
+	fmt.Println("Data berhasil dihapus!")
 }
 
-func tandaiSelesai() {
+func tandaiSelesai(T *arrTugas) {
 	var id string
 
 	fmt.Print("Masukkan ID Tugas yang sudah selesai: ")
 	fmt.Scan(&id)
 
-	for i := 0; i < len(dataTugas); i++ {
-		if dataTugas[i].ID == id {
-			dataTugas[i].Selesai = true
-			fmt.Println("Tugas berhasil ditandai selesai!")
-			return
-		}
+	idx := seqSearchID(*T, id)
+	if idx == -1 {
+		fmt.Println("Data tidak ditemukan")
+		return
 	}
 
-	fmt.Println("Data tidak ditemukan")
+	(*T)[idx].Selesai = true
+	fmt.Println("Tugas berhasil ditandai selesai!")
 }
 
-func sequentialSearch() {
+func seqSearchID(T arrTugas, X string) int {
+	var found int
+	var j int
+
+	j = 0
+	found = -1
+
+	for j < len(T) && found == -1 {
+		if T[j].ID == X {
+			found = j
+		}
+		j = j + 1
+	}
+	return found
+}
+
+func sequentialSearch(T arrTugas) {
 	var pilih int
 	var keyword string
+	var i int
 
 	fmt.Println("Cari berdasarkan:")
 	fmt.Println("1. Nama Pekerjaan")
 	fmt.Println("2. Kategori Ruangan")
 	fmt.Print("Pilih: ")
-
 	fmt.Scan(&pilih)
 
 	if pilih == 1 {
@@ -167,16 +185,15 @@ func sequentialSearch() {
 		fmt.Scan(&keyword)
 
 		ditemukan := false
-		for i := 0; i < len(dataTugas); i++ {
-			if dataTugas[i].NamaTugas == keyword {
+		for i = 0; i < len(T); i += 1 {
+			if T[i].NamaTugas == keyword {
 				fmt.Println("Data ditemukan!")
-				fmt.Println("ID       :", dataTugas[i].ID)
-				fmt.Println("Kategori :", dataTugas[i].Kategori)
-				fmt.Println("Durasi   :", dataTugas[i].Durasi, "menit")
+				fmt.Println("ID       :", T[i].ID)
+				fmt.Println("Kategori :", T[i].Kategori)
+				fmt.Println("Durasi   :", T[i].Durasi, "menit")
 				ditemukan = true
 			}
 		}
-
 		if !ditemukan {
 			fmt.Println("Data tidak ditemukan")
 		}
@@ -186,16 +203,16 @@ func sequentialSearch() {
 		fmt.Scan(&keyword)
 
 		ditemukan := false
-		for i := 0; i < len(dataTugas); i++ {
-			if dataTugas[i].Kategori == keyword {
+		var j int
+		for j = 0; j < len(T); j += 1 {
+			if T[j].Kategori == keyword {
 				fmt.Println("Data ditemukan!")
-				fmt.Println("ID         :", dataTugas[i].ID)
-				fmt.Println("Nama Tugas :", dataTugas[i].NamaTugas)
-				fmt.Println("Durasi     :", dataTugas[i].Durasi, "menit")
+				fmt.Println("ID         :", T[j].ID)
+				fmt.Println("Nama Tugas :", T[j].NamaTugas)
+				fmt.Println("Durasi     :", T[j].Durasi, "menit")
 				ditemukan = true
 			}
 		}
-
 		if !ditemukan {
 			fmt.Println("Data tidak ditemukan")
 		}
@@ -205,98 +222,117 @@ func sequentialSearch() {
 	}
 }
 
-func binarySearch() {
-	var cari string
+func binarySearchNama(T arrTugas, X string) int {
+	var found int
+	var kr int
+	var kn int
 
-	for i := 0; i < len(dataTugas)-1; i++ {
-		min := i
-		for j := i + 1; j < len(dataTugas); j++ {
-			if dataTugas[j].NamaTugas < dataTugas[min].NamaTugas {
-				min = j
-			}
+	found = -1
+	kr = 0
+	kn = len(T) - 1
+
+	for kr <= kn && found == -1 {
+		med := (kr + kn) / 2
+		if X < T[med].NamaTugas {
+			kn = med - 1
+		} else if X > T[med].NamaTugas {
+			kr = med + 1
+		} else {
+			found = med
 		}
-		dataTugas[i], dataTugas[min] = dataTugas[min], dataTugas[i]
 	}
+
+	return found
+}
+
+func binarySearch(T *arrTugas) {
+	var cari string
+	insertionSortNama(T)
 
 	fmt.Print("Masukkan nama pekerjaan yang dicari: ")
 	fmt.Scan(&cari)
 
-	kiri := 0
-	kanan := len(dataTugas) - 1
-
-	for kiri <= kanan {
-		tengah := (kiri + kanan) / 2
-
-		if dataTugas[tengah].NamaTugas == cari {
-			fmt.Println("Data ditemukan!")
-			fmt.Println("ID         :", dataTugas[tengah].ID)
-			fmt.Println("Nama Tugas :", dataTugas[tengah].NamaTugas)
-			fmt.Println("Kategori   :", dataTugas[tengah].Kategori)
-			fmt.Println("Durasi     :", dataTugas[tengah].Durasi, "menit")
-			return
-
-		} else if cari < dataTugas[tengah].NamaTugas {
-			kanan = tengah - 1
-		} else {
-			kiri = tengah + 1
-		}
+	idx := binarySearchNama(*T, cari)
+	if idx == -1 {
+		fmt.Println("Data tidak ditemukan")
+	} else {
+		fmt.Println("Data ditemukan!")
+		fmt.Println("ID         :", (*T)[idx].ID)
+		fmt.Println("Nama Tugas :", (*T)[idx].NamaTugas)
+		fmt.Println("Kategori   :", (*T)[idx].Kategori)
+		fmt.Println("Durasi     :", (*T)[idx].Durasi, "menit")
 	}
-
-	fmt.Println("Data tidak ditemukan")
 }
 
-func insertionSortDurasi() {
-	for i := 1; i < len(dataTugas); i++ {
-		temp := dataTugas[i]
-		j := i - 1
-
-		for j >= 0 && dataTugas[j].Durasi > temp.Durasi {
-			dataTugas[j+1] = dataTugas[j]
-			j--
+func insertionSortDurasi(T *arrTugas) {
+	var i int
+	var j int
+	for i = 1; i <= len(*T)-1; i += 1 {
+		j = i
+		temp := (*T)[j]
+		for j > 0 && temp.Durasi < (*T)[j-1].Durasi {
+			(*T)[j] = (*T)[j-1]
+			j = j - 1
 		}
-
-		dataTugas[j+1] = temp
+		(*T)[j] = temp
 	}
-
 	fmt.Println("Data berhasil diurutkan berdasarkan estimasi durasi (ascending)")
 }
 
-func selectionSortKesulitan() {
-	for i := 0; i < len(dataTugas)-1; i++ {
-		max := i
-
-		for j := i + 1; j < len(dataTugas); j++ {
-			if dataTugas[j].Kesulitan > dataTugas[max].Kesulitan {
-				max = j
-			}
+func insertionSortNama(T *arrTugas) {
+	var i int
+	for i = 1; i <= len(*T)-1; i += 1 {
+		var j int = i
+		temp := (*T)[j]
+		for j > 0 && temp.NamaTugas < (*T)[j-1].NamaTugas {
+			(*T)[j] = (*T)[j-1]
+			j = j - 1
 		}
-
-		dataTugas[i], dataTugas[max] = dataTugas[max], dataTugas[i]
+		(*T)[j] = temp
 	}
+}
 
+func selectionSortKesulitan(T *arrTugas) {
+	var i int
+	for i = 1; i <= len(*T)-1; i += 1 {
+		idx_max := i - 1
+		var j int = i
+		for j < len(*T) {
+			if (*T)[j].Kesulitan > (*T)[idx_max].Kesulitan {
+				idx_max = j
+			}
+			j = j + 1
+		}
+		t := (*T)[idx_max]
+		(*T)[idx_max] = (*T)[i-1]
+		(*T)[i-1] = t
+	}
 	fmt.Println("Data berhasil diurutkan berdasarkan tingkat kesulitan (descending)")
 }
 
-func statistik() {
-	if len(dataTugas) == 0 {
+func statistik(T arrTugas) {
+	var i int
+	var totalSelesai, totalDurasi int
+
+	if len(T) == 0 {
 		fmt.Println("Belum ada data tugas")
 		return
 	}
 
-	totalSelesai := 0
-	totalDurasi := 0
+	totalSelesai = 0
+	totalDurasi = 0
 
-	for i := 0; i < len(dataTugas); i++ {
-		if dataTugas[i].Selesai {
+	for i = 0; i < len(T); i += 1 {
+		if T[i].Selesai {
 			totalSelesai++
-			totalDurasi += dataTugas[i].Durasi
+			totalDurasi += T[i].Durasi
 		}
 	}
 
 	fmt.Println("\n===== STATISTIK TASKMATE =====")
-	fmt.Println("Total Tugas           :", len(dataTugas))
+	fmt.Println("Total Tugas           :", len(T))
 	fmt.Println("Tugas Selesai         :", totalSelesai)
-	fmt.Println("Tugas Belum Selesai   :", len(dataTugas)-totalSelesai)
+	fmt.Println("Tugas Belum Selesai   :", len(T)-totalSelesai)
 
 	if totalSelesai > 0 {
 		rataRata := float64(totalDurasi) / float64(totalSelesai)
@@ -307,45 +343,45 @@ func statistik() {
 }
 
 func main() {
+	var dataTugas arrTugas
 	var pilih int
 
 	for {
 		fmt.Println("\n===== MENU TASKMATE =====")
-		fmt.Println("1. Tambah Tugas")
-		fmt.Println("2. Tampilkan Tugas")
-		fmt.Println("3. Ubah Tugas")
-		fmt.Println("4. Hapus Tugas")
-		fmt.Println("5. Tandai Tugas Selesai")
-		fmt.Println("6. Sequential Search")
-		fmt.Println("7. Binary Search")
-		fmt.Println("8. Insertion Sort (Durasi)")
-		fmt.Println("9. Selection Sort (Kesulitan)")
+		fmt.Println("1.  Tambah Tugas")
+		fmt.Println("2.  Tampilkan Tugas")
+		fmt.Println("3.  Ubah Tugas")
+		fmt.Println("4.  Hapus Tugas")
+		fmt.Println("5.  Tandai Tugas Selesai")
+		fmt.Println("6.  Sequential Search")
+		fmt.Println("7.  Binary Search")
+		fmt.Println("8.  Insertion Sort (Durasi)")
+		fmt.Println("9.  Selection Sort (Kesulitan)")
 		fmt.Println("10. Statistik")
-		fmt.Println("0. Keluar")
-
+		fmt.Println("0.  Keluar")
 		fmt.Print("Pilih menu: ")
 		fmt.Scan(&pilih)
 
 		if pilih == 1 {
-			tambahTugas()
+			tambahTugas(&dataTugas)
 		} else if pilih == 2 {
-			tampilTugas()
+			tampilTugas(dataTugas)
 		} else if pilih == 3 {
-			ubahTugas()
+			ubahTugas(&dataTugas)
 		} else if pilih == 4 {
-			hapusTugas()
+			hapusTugas(&dataTugas)
 		} else if pilih == 5 {
-			tandaiSelesai()
+			tandaiSelesai(&dataTugas)
 		} else if pilih == 6 {
-			sequentialSearch()
+			sequentialSearch(dataTugas)
 		} else if pilih == 7 {
-			binarySearch()
+			binarySearch(&dataTugas)
 		} else if pilih == 8 {
-			insertionSortDurasi()
+			insertionSortDurasi(&dataTugas)
 		} else if pilih == 9 {
-			selectionSortKesulitan()
+			selectionSortKesulitan(&dataTugas)
 		} else if pilih == 10 {
-			statistik()
+			statistik(dataTugas)
 		} else if pilih == 0 {
 			fmt.Println("Program selesai")
 			break
