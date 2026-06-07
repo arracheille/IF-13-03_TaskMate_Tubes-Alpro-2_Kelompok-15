@@ -127,10 +127,8 @@ func hapusTugas(T *arrTugas) {
 		return
 	}
 
-	j = idx
-	for j < len(*T)-1 {
+	for j = idx; j < len(*T)-1; j += 1 {
 		(*T)[j] = (*T)[j+1]
-		j = j + 1
 	}
 	*T = (*T)[:len(*T)-1]
 
@@ -172,7 +170,7 @@ func seqSearchID(T arrTugas, X string) int {
 func sequentialSearch(T arrTugas) {
 	var pilih int
 	var keyword string
-	var i int
+	var i, j int
 
 	fmt.Println("Cari berdasarkan:")
 	fmt.Println("1. Nama Pekerjaan")
@@ -203,7 +201,6 @@ func sequentialSearch(T arrTugas) {
 		fmt.Scan(&keyword)
 
 		ditemukan := false
-		var j int
 		for j = 0; j < len(T); j += 1 {
 			if T[j].Kategori == keyword {
 				fmt.Println("Data ditemukan!")
@@ -265,8 +262,7 @@ func binarySearch(T *arrTugas) {
 }
 
 func insertionSortDurasi(T *arrTugas) {
-	var i int
-	var j int
+	var i, j int
 	for i = 1; i <= len(*T)-1; i += 1 {
 		j = i
 		temp := (*T)[j]
@@ -280,9 +276,9 @@ func insertionSortDurasi(T *arrTugas) {
 }
 
 func insertionSortNama(T *arrTugas) {
-	var i int
+	var i, j int
 	for i = 1; i <= len(*T)-1; i += 1 {
-		var j int = i
+		j = i
 		temp := (*T)[j]
 		for j > 0 && temp.NamaTugas < (*T)[j-1].NamaTugas {
 			(*T)[j] = (*T)[j-1]
@@ -293,15 +289,13 @@ func insertionSortNama(T *arrTugas) {
 }
 
 func selectionSortKesulitan(T *arrTugas) {
-	var i int
+	var i, j int
 	for i = 1; i <= len(*T)-1; i += 1 {
 		idx_max := i - 1
-		var j int = i
-		for j < len(*T) {
+		for j = i; j < len(*T); j += 1 {
 			if (*T)[j].Kesulitan > (*T)[idx_max].Kesulitan {
 				idx_max = j
 			}
-			j = j + 1
 		}
 		t := (*T)[idx_max]
 		(*T)[idx_max] = (*T)[i-1]
