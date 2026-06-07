@@ -290,9 +290,10 @@ func insertionSortNama(T *arrTugas) {
 
 func selectionSortKesulitan(T *arrTugas) {
 	var i, j int
-	for i = 1; i <= len(*T)-1; i += 1 {
+	n := len(*T)
+	for i = 1; i <= n-1; i += 1 {
 		idx_max := i - 1
-		for j = i; j < len(*T); j += 1 {
+		for j = i; j < n; j += 1 {
 			if (*T)[j].Kesulitan > (*T)[idx_max].Kesulitan {
 				idx_max = j
 			}
